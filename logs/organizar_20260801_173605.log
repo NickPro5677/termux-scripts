@@ -1,0 +1,16 @@
+========================================
+ Organizador de Descargas
+ Fecha: Sat Aug  1 17:36:05 -04 2026
+ Carpeta: /data/data/com.termux/files/home/storage/downloads
+ Modo DRY_RUN: no  (si = solo simula)
+========================================
+
+[ERROR]  No pude mover '- SpaceX - Lanzamientos'
+[ERROR]  No pude mover '- SpaceX - Lanzamientos (1)'
+
+========================================
+ Resumen
+ Archivos procesados: 0
+ Errores/omitidos:    2
+ Log guardado en:     /data/data/com.termux/files/home/scripts/logs/organizar_20260801_173605.log
+========================================

@@ -1,0 +1,1 @@
+/data/data/com.termux/files/home/scripts/reportes/inventario_20260801_141520.txt
