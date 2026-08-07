@@ -1,4 +1,0 @@
-############################################################
-# INVENTARIO COMPLETO DEL TELÉFONO
-# Fecha: Sat Aug  1 13:02:54 -04 2026
-# Host:  localhost

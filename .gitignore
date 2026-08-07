@@ -1,0 +1,17 @@
+# Runtime / generated
+logs/
+reportes/
+*.pid
+*.log
+*.err
+*.csv
+
+# Local overrides (optional secrets) — keep example confs tracked
+# *.local.conf
+
+# OS / editor
+.DS_Store
+*~
+*.swp
+.idea/
+.vscode/
