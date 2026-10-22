@@ -12,9 +12,13 @@ LOGDIR="$HOME/scripts/logs"
 mkdir -p "$LOGDIR"
 LOGFILE="$LOGDIR/organizar_$(date +%Y%m%d_%H%M%S).log"
 
-# Modo simulación: si pones "si", NO mueve nada, solo muestra
-# Cambia a "no" cuando quieras que mueva de verdad
-DRY_RUN="no"
+# Modo simulación (por defecto): con "si" NO mueve nada, solo muestra.
+# Para mover de verdad: ./organizar_descargas.sh --aplicar
+# (o DRY_RUN="no" ./organizar_descargas.sh)
+DRY_RUN="${DRY_RUN:-si}"
+if [ "${1:-}" = "--aplicar" ]; then
+  DRY_RUN="no"
+fi
 
 # ------------------------------------------------------------
 # Función: escribir en pantalla y en el log
@@ -129,7 +133,5 @@ if [ "$DRY_RUN" = "si" ]; then
   echo ""
   echo ">>> ESTO FUE UNA SIMULACIÓN. No se movió nada."
   echo ">>> Cuando quieras hacerlo de verdad:"
-  echo ">>> 1) Abre el script: nano ~/scripts/organizar_descargas.sh"
-  echo ">>> 2) Cambia DRY_RUN=\"si\" por DRY_RUN=\"no\""
-  echo ">>> 3) Guarda y vuelve a ejecutarlo"
+  echo ">>>   ./organizar_descargas.sh --aplicar"
 fi

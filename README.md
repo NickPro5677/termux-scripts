@@ -45,8 +45,8 @@ El CSV (por defecto `~/storage/shared/battery_log.csv`) tiene las columnas `fech
 | Script | Qué hace |
 |---|---|
 | `organizar_telefono.sh` | Clasifica archivos sueltos del almacenamiento por tipo y origen según `organizar_telefono.conf`. **Por defecto solo simula.** |
-| `organizar_descargas.sh` | Ordena la carpeta Descargas en subcarpetas (APK, Documentos, Imágenes, Videos, Audio, Comprimidos, Otros) |
-| `organizar_tiktok.sh` | Busca archivos `.mp4`/`.mov` en DCIM, Download, Movies, Pictures y Android/media y los mueve a `TikTok_Videos` |
+| `organizar_descargas.sh` | Ordena la carpeta Descargas en subcarpetas (APK, Documentos, Imágenes, Videos, Audio, Comprimidos, Otros). **Por defecto solo simula**; `--aplicar` mueve de verdad. |
+| `organizar_tiktok.sh` | Busca videos `.mp4`/`.mov` de TikTok (nombre o ruta con `tiktok`, `musically`, `ugc.trill`, `snaptik` o `ssstik`) en DCIM, Download, Movies, Pictures y Android/media y los pasa a `TikTok_Videos`. **Por defecto solo simula**; `--aplicar` mueve de verdad. |
 | `recolectar_documentos.sh` | Copia documentos (PDF, Office, ODF, TXT, CSV, MD, EPUB…) de todo el almacenamiento a `Documents/MisDocumentos` |
 
 ```sh
@@ -54,9 +54,14 @@ El CSV (por defecto `~/storage/shared/battery_log.csv`) tiene las columnas `fech
 ./organizar_telefono.sh --informe    # solo cuenta el desorden
 ./organizar_telefono.sh --aplicar    # mueve de verdad
 ./organizar_telefono.sh --verbose    # lista cada archivo
+
+./organizar_descargas.sh             # simulación
+./organizar_descargas.sh --aplicar   # mueve de verdad
+./organizar_tiktok.sh                # simulación
+./organizar_tiktok.sh --aplicar      # mueve de verdad
 ```
 
-> ⚠️ `organizar_descargas.sh` (con `DRY_RUN="no"` en el script) y `organizar_tiktok.sh` mueven archivos de verdad desde el primer uso. `organizar_tiktok.sh` mueve **todos** los `.mp4`/`.mov` que encuentre en esas carpetas, no solo los de TikTok. Revisa las rutas antes de ejecutarlos.
+> ℹ️ Todos los organizadores arrancan en **modo simulación** (dry-run): muestran qué harían sin mover nada. Revisa la salida y luego usa `--aplicar`. `organizar_descargas.sh` también acepta `DRY_RUN="no"` como variable de entorno.
 
 `organizar_telefono.conf` define los destinos por tipo, las zonas a escanear, las carpetas protegidas que nunca se tocan, las extensiones a ignorar y si se pide confirmación. El script también guarda un CSV con lo movido (`~/scripts/reportes/organizar_ultimo.csv`) para poder deshacerlo a mano.
 

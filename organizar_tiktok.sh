@@ -3,20 +3,39 @@
 # === Script para organizar videos de TikTok ===
 # Autor: personalizado para Redmi Note 11 + Termux
 # Fecha: 2026
+#
+# Uso:
+#   ./organizar_tiktok.sh            # simulación (por defecto): solo muestra qué movería
+#   ./organizar_tiktok.sh --aplicar  # mueve de verdad
+#
+# Solo toma videos que parecen de TikTok: el nombre o la ruta contiene
+# "tiktok", "musically", "ugc.trill", "snaptik" o "ssstik" (sin importar mayúsculas).
 
 # Carpeta de destino
 DESTINO="$HOME/storage/shared/TikTok_Videos"
 
-# Crear destino si no existe
-mkdir -p "$DESTINO"
+# Modo simulación por defecto
+DRY_RUN="${DRY_RUN:-si}"
+if [ "${1:-}" = "--aplicar" ]; then
+    DRY_RUN="no"
+fi
 
-# Contador
+# Patrón para reconocer videos de TikTok (en minúsculas)
+PATRON_TIKTOK='tiktok|musically|ugc\.trill|snaptik|ssstik'
+
+# Crear destino si no existe (solo al mover de verdad)
+if [ "$DRY_RUN" = "no" ]; then
+    mkdir -p "$DESTINO"
+fi
+
+# Contadores
 count=0
 moved=0
 
 echo "========================================"
 echo " Buscando videos de TikTok..."
 echo " Destino: $DESTINO"
+echo " Modo DRY_RUN: $DRY_RUN  (si = solo simula)"
 echo "========================================"
 echo
 
@@ -33,13 +52,18 @@ SEARCH_PATHS=(
 for path in "${SEARCH_PATHS[@]}"; do
     if [ -d "$path" ]; then
         echo "Escaneando: $path"
-        
-        # Busca archivos .mp4 (puedes añadir .mov si quieres)
-        # -mtime -365 limita a archivos de los últimos 365 días (opcional, quítalo si quieres todos)
-        find "$path" -type f \( -iname "*.mp4" -o -iname "*.mov" \) 2>/dev/null | while read -r file; do
-            
+
+        # Busca archivos .mp4 y .mov
+        while IFS= read -r -d '' file; do
+
             # Evitar mover archivos que ya están en la carpeta destino
             if [[ "$file" == "$DESTINO"* ]]; then
+                continue
+            fi
+
+            # Filtro real: solo videos cuya ruta o nombre sea de TikTok
+            ruta_min=$(printf '%s' "$file" | tr '[:upper:]' '[:lower:]')
+            if ! [[ "$ruta_min" =~ $PATRON_TIKTOK ]]; then
                 continue
             fi
 
@@ -47,24 +71,35 @@ for path in "${SEARCH_PATHS[@]}"; do
             size=$(du -h "$file" | cut -f1)
 
             echo "Encontrado: $filename ($size)"
-            
-            # Mover el archivo (usa cp en lugar de mv si prefieres copiar)
-            if mv -n "$file" "$DESTINO/" 2>/dev/null; then
-                echo "  → Movido correctamente"
-                ((moved++))
-            else
-                echo "  → Error al mover (puede que ya exista o permiso)"
+            count=$((count + 1))
+
+            if [ "$DRY_RUN" = "si" ]; then
+                echo "  → [SIMULA] se movería a $DESTINO/"
+                continue
             fi
-            
-            ((count++))
-        done
+
+            # Mover el archivo sin sobrescribir
+            if [ -e "$DESTINO/$filename" ]; then
+                echo "  → Omitido: ya existe en el destino"
+            elif mv -n "$file" "$DESTINO/" 2>/dev/null; then
+                echo "  → Movido correctamente"
+                moved=$((moved + 1))
+            else
+                echo "  → Error al mover (permiso)"
+            fi
+        done < <(find "$path" -type f \( -iname "*.mp4" -o -iname "*.mov" \) -print0 2>/dev/null)
     fi
 done
 
 echo
 echo "========================================"
 echo " Proceso terminado"
-echo " Archivos encontrados: $count"
+echo " Videos de TikTok encontrados: $count"
 echo " Archivos movidos: $moved"
-echo " Revisa la carpeta: $DESTINO"
+if [ "$DRY_RUN" = "si" ]; then
+    echo " ESTO FUE UNA SIMULACIÓN. No se movió nada."
+    echo " Para mover de verdad: ./organizar_tiktok.sh --aplicar"
+else
+    echo " Revisa la carpeta: $DESTINO"
+fi
 echo "========================================"
